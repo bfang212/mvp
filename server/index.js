@@ -18,13 +18,16 @@ app.post('/stocks', function(req, res) {
   let ticker = req.body.ticker
   axios.get(`https://api.iextrading.com/1.0/stock/${ticker}/quote?displayPercent=true`)
   .then((stock) => {
-    console.log(stock.data)
-    save(stock.data);
+    axios.get(`https://api.iextrading.com/1.0/stock/${ticker}/news/last/3`)
+    .then((potato) => {
+      save(stock.data, potato.data).then(() => {
+        res.status(201).send()
+      });
+    })
   }) 
   .catch((err) => console.error(err))
-  .then(() => res.status(201).send())
-
 })
+
 
 app.get('/stocks', function (req, res) {
   find()

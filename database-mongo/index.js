@@ -15,7 +15,10 @@ var stockSchema = mongoose.Schema({
   symbol: {type: String, unique: true},
   lastprice: Number,
   week52low: Number,
-  percentage_difference: Number
+  percentage_difference: Number,
+  headline1: String,
+  headline2: String,
+  headline3: String,
   },
   {timestamps: true}
 );
@@ -28,13 +31,16 @@ let find = () => {
                .exec()
 };
 
-let save = (stock) => {
+let save = (stock, potato) => {
   console.log('here')
   return new Stocks({
     symbol: stock.symbol,
     lastprice: stock.latestPrice,
     week52low: stock.week52Low,
-    percentage_difference: (((stock.latestPrice / stock.week52Low) - 1) * 100).toFixed(2)
+    percentage_difference: (((stock.latestPrice / stock.week52Low) - 1) * 100).toFixed(2),
+    headline1: potato[0].summary,
+    headline2: potato[1].summary,
+    headline3: potato[2].summary
   }).save()
     .catch((err) => {console.err(error)});
 };

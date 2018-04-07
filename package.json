@@ -25,8 +25,10 @@
     "jquery": "^3.1.1",
     "mongoose": "^4.8.6",
     "mysql": "^2.13.0",
-    "react": "^15.4.2",
+    "react": "^16.3.1",
     "react-collapsing-table": "^0.3.1",
-    "react-dom": "^15.4.2"
+    "react-dom": "^16.3.1",
+    "react-icons": "^2.2.7",
+    "reactstrap": "^5.0.0"
   }
 }

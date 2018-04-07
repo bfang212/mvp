@@ -12,6 +12,7 @@ class AddStock extends React.Component {
 
   addStock () {
     this.props.onSearch(this.state.ticker);
+    this.setState({ticker: ''});
   }
 
   onChange(e) {
@@ -23,7 +24,7 @@ class AddStock extends React.Component {
 
   render() {
     return (<div>
-      <h4>Add more tickers!</h4>
+      <h3>Add more tickers!</h3>
       Enter a stock ticker: <input value={this.state.ticker} onChange={this.onChange}/>
       <button onClick={this.addStock}>Add ticker</button>
     </div>)
