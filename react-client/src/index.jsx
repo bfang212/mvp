@@ -1,34 +1,44 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import $ from 'jquery';
-import List from './components/List.jsx';
+import axios from 'axios';
+import StockList from './components/StockList.jsx';
+import AddStock from './components/AddStock.jsx';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = { 
-      items: []
+      stocks: []
     }
+  
+  this.search = this.search.bind(this);
   }
 
   componentDidMount() {
-    $.ajax({
-      url: '/items', 
-      success: (data) => {
-        this.setState({
-          items: data
-        })
-      },
-      error: (err) => {
-        console.log('err', err);
-      }
-    });
+    axios.get('/stocks')
+    .then((stocks) => {
+      this.setState({stocks: stocks.data})
+    })
+    .catch((err) => console.error(err))
   }
+
+
+  search (ticker) {
+    axios.post('/stocks', {ticker})
+    .then(() => axios.get('/stocks'))
+    .then((stocks) => {
+      this.setState({stocks: stocks.data})
+    })
+    .catch((err) => console.error(err))
+  }
+
+
 
   render () {
     return (<div>
-      <h1>Item List</h1>
-      <List items={this.state.items}/>
+      <h1>Let's time the market!</h1>
+      <AddStock onSearch={this.search}/>
+      <StockList stocks={this.state.stocks}/>
     </div>)
   }
 }

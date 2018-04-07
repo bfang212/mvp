@@ -1,29 +1,40 @@
 var express = require('express');
 var bodyParser = require('body-parser');
+var axios = require('axios');
 // UNCOMMENT THE DATABASE YOU'D LIKE TO USE
 // var items = require('../database-mysql');
-// var items = require('../database-mongo');
+var {find, save} = require('../database-mongo/index.js');
+
 
 var app = express();
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
+
 // UNCOMMENT FOR REACT
-// app.use(express.static(__dirname + '/../react-client/dist'));
+app.use(express.static(__dirname + '/../react-client/dist'));
 
-// UNCOMMENT FOR ANGULAR
-// app.use(express.static(__dirname + '/../angular-client'));
-// app.use(express.static(__dirname + '/../node_modules'));
+app.post('/stocks', function(req, res) {
+  let ticker = req.body.ticker
+  axios.get(`https://api.iextrading.com/1.0/stock/${ticker}/quote?displayPercent=true`)
+  .then((stock) => {
+    console.log(stock.data)
+    save(stock.data);
+  }) 
+  .catch((err) => console.error(err))
+  .then(() => res.status(201).send())
 
-app.get('/items', function (req, res) {
-  items.selectAll(function(err, data) {
-    if(err) {
-      res.sendStatus(500);
-    } else {
-      res.json(data);
-    }
-  });
+})
+
+app.get('/stocks', function (req, res) {
+  find()
+  .then((stocks) => {res.status(200).send(stocks)})
+  .catch((err) => (console.error(err)))
 });
 
-app.listen(3000, function() {
+let port = process.env.PORT || 3000;
+
+app.listen(port, function() {
   console.log('listening on port 3000!');
 });
 

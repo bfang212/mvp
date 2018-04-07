@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/test');
+mongoose.connect(process.env.MLAB_URL || 'mongodb://localhost/test');
 
 var db = mongoose.connection;
 
@@ -11,21 +11,34 @@ db.once('open', function() {
   console.log('mongoose connected successfully');
 });
 
-var itemSchema = mongoose.Schema({
-  quantity: Number,
-  description: String
-});
+var stockSchema = mongoose.Schema({
+  symbol: {type: String, unique: true},
+  lastprice: Number,
+  week52low: Number,
+  percentage_difference: Number
+  },
+  {timestamps: true}
+);
 
-var Item = mongoose.model('Item', itemSchema);
+let Stocks = mongoose.model('Stocks', stockSchema);
 
-var selectAll = function(callback) {
-  Item.find({}, function(err, items) {
-    if(err) {
-      callback(err, null);
-    } else {
-      callback(null, items);
-    }
-  });
+let find = () => {
+  return Stocks.find({})
+               .sort('-percentage_different')
+               .exec()
 };
 
-module.exports.selectAll = selectAll;
+let save = (stock) => {
+  console.log('here')
+  return new Stocks({
+    symbol: stock.symbol,
+    lastprice: stock.latestPrice,
+    week52low: stock.week52Low,
+    percentage_difference: (((stock.latestPrice / stock.week52Low) - 1) * 100).toFixed(2)
+  }).save()
+    .catch((err) => {console.err(error)});
+};
+
+
+exports.save = save;
+exports.find = find;
