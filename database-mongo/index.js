@@ -24,7 +24,7 @@ let Stocks = mongoose.model('Stocks', stockSchema);
 
 let find = () => {
   return Stocks.find({})
-               .sort('-percentage_different')
+               .sort('-percentage_difference')
                .exec()
 };
 
